@@ -136,11 +136,18 @@ def test_app_offline_query_and_report_no_runtime_errors(tmp_path, make_bars, met
     app.sidebar.button[0].click().run()
     assert not app.exception and not app.error
     assert len(app.metric) == 5
-    assert len(app.get("plotly_chart")) == 3
+    assert len(app.get("component_instance")) == 1
     assert "TEST / 人工构造样本" in app.session_state["report"]
     assert "# QuantMind ETF 研究报告" in app.session_state["report"]
     app.sidebar.selectbox[0].select("510500").run()
     assert len(source.calls) == 1  # form change does not fetch
+    report = app.session_state["report"]
+    app.selectbox(key="chart_panel").select("RSI").run()
+    app.toggle(key="chart_ma").set_value(False).run()
+    assert not app.exception and not app.error
+    assert len(source.calls) == 1  # chart controls never fetch or change the report snapshot
+    assert app.session_state["report"] == report
+    assert app.session_state["analysis"].symbol == "510300"
 
 
 def test_app_failure_state_does_not_show_old_results(tmp_path, make_bars, metadata, monkeypatch):

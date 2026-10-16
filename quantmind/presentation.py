@@ -4,11 +4,15 @@ import math
 
 import pandas as pd
 
-UP = "#F06B72"
-DOWN = "#32B89A"
-TEXT = "#E5E7EB"
-MUTED = "#8B97AA"
-ACCENT = "#5B8DEF"
+UP = "#B55245"
+DOWN = "#447D70"
+TEXT = "#293C35"
+MUTED = "#727A6F"
+ACCENT = "#607F9B"
+PAPER = "#FDFCF8"
+GRID = "#E7E8DF"
+GOLD = "#AC8648"
+PLUM = "#9582A0"
 
 
 @dataclass(frozen=True)

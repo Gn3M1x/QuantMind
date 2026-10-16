@@ -1,20 +1,20 @@
 [theme]
-base = "dark"
-primaryColor = "#5B8DEF"
-backgroundColor = "#0B1220"
-secondaryBackgroundColor = "#111827"
-textColor = "#E5E7EB"
-borderColor = "#263244"
+base = "light"
+primaryColor = "#435F53"
+backgroundColor = "#F6F5F0"
+secondaryBackgroundColor = "#ECEDE5"
+textColor = "#293C35"
+borderColor = "#DDDFD4"
 font = "sans serif"
 baseFontSize = 14
-baseRadius = "0.625rem"
+baseRadius = "0.375rem"
 showWidgetBorder = true
 showSidebarBorder = true
 
 [theme.sidebar]
-primaryColor = "#5B8DEF"
-backgroundColor = "#0E1726"
-secondaryBackgroundColor = "#111827"
+primaryColor = "#435F53"
+backgroundColor = "#EEEEE6"
+secondaryBackgroundColor = "#F9F9F4"
 
 [server]
 address = "127.0.0.1"
