@@ -1,0 +1,13 @@
+:root {color-scheme:light; font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif; color:#293c35; background:#fdfcf8;}
+* {box-sizing:border-box;}
+html,body {margin:0; padding:0; width:100%; overflow:hidden;}
+.chart-toolbar {min-height:38px; display:flex; align-items:center; flex-wrap:wrap; gap:10px 18px; padding:4px 8px 8px; font-size:12px;}
+.follow-control {display:flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap;}
+input {accent-color:#435f53; width:15px; height:15px; margin:0;}
+button {border:1px solid #dddfd4; border-radius:4px; background:#f6f5f0; color:#293c35; padding:5px 10px; cursor:pointer; font:inherit;}
+button:hover {background:#e7ece2;}
+button:focus-visible,input:focus-visible {outline:2px solid #607f9b; outline-offset:3px;}
+#view-status {font-size:11px; color:#727a6f; font-variant-numeric:tabular-nums;}
+#view-status[data-error="true"] {color:#b55245;}
+#chart {width:100%; touch-action:pan-y;}
+@media(max-width:500px) {.chart-toolbar {gap:8px 14px;} #view-status {flex-basis:100%;}}

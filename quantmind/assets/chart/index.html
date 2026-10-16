@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="chart.css">
+</head>
+<body>
+  <div class="chart-toolbar">
+    <label class="follow-control"><input id="auto-follow" type="checkbox" checked> 自动跟随</label>
+    <button id="reset-view" type="button" title="恢复当前快捷视窗，并开启自动跟随">恢复视图</button>
+    <span id="view-status" role="status" aria-live="polite">正在载入图表…</span>
+  </div>
+  <div id="chart" aria-label="可平移的 ETF 价格与技术指标图表"></div>
+  <script src="plotly.min.js"></script>
+  <script src="viewport.js"></script>
+  <script src="controller.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from quantmind.analysis import analyze, format_metric
-from quantmind.charts import build_charts, date_gaps, record_axis
+from quantmind.charts import build_charts, build_workspace, date_gaps, record_axis
 from quantmind.presentation import QuantityUnit, display_quantity, quantity_unit, quantity_scale, metric_color, UP, DOWN
 from quantmind.report import generate_report
 
@@ -108,3 +108,61 @@ def test_scaled_chart_is_display_only_and_report_numbers_remain_equal(make_bars,
 def test_up_down_colors_match_chart_convention():
     assert metric_color("close", 12, 11) == metric_color("return20", .1) == UP
     assert metric_color("close", 10, 11) == metric_color("max_drawdown", -.1) == DOWN
+
+
+def test_workspace_links_all_panels_and_preserves_observations(make_bars, metadata):
+    bars = make_bars(count=100)
+    result = analyze("510300", bars, "2023-01-02", "2023-05-19", metadata)
+    before = result.frame.copy(deep=True)
+    report_before = generate_report(result)
+    fig = build_workspace(result)
+    dates = before.date.dt.strftime("%Y-%m-%d").tolist()
+    assert len(fig.data) == 9  # OHLC, 3 MA, volume, 3 MACD, RSI
+    assert list(fig.data[0].close) == list(before.close)
+    for trace in fig.data:
+        assert list(trace.x) == dates
+        assert [row[0] for row in trace.customdata] == dates
+    for key in ("xaxis", "xaxis2", "xaxis3", "xaxis4"):
+        axis = getattr(fig.layout, key)
+        assert axis.type == "category" and list(axis.categoryarray) == dates
+        assert axis.range == (-.5, 99.5)
+        if key != "xaxis4":
+            assert axis.matches == "x4" and axis.showticklabels is False
+    assert fig.layout.yaxis.side == "right"
+    assert fig.layout.yaxis4.range == (0, 100)
+    assert any(s.y0 == s.y1 == 100 for s in fig.layout.shapes)
+    pd.testing.assert_frame_equal(result.frame, before)
+    assert generate_report(result) == report_before
+
+
+@pytest.mark.parametrize("panel,trace_count,axis_count", [("both", 9, 4), ("macd", 8, 3), ("rsi", 6, 3), ("none", 5, 2)])
+def test_workspace_panel_switches_keep_dates_and_synchronize_axes(make_bars, metadata, panel, trace_count, axis_count):
+    result = analyze("510300", make_bars(count=100), "2023-01-02", "2023-05-19", metadata)
+    fig = build_workspace(result, oscillator=panel)
+    assert len(fig.data) == trace_count
+    axes = [k for k in fig.layout if k.startswith("xaxis")]
+    assert len(axes) == axis_count
+    assert fig.layout.xaxis.matches == f"x{axis_count}"
+    hidden = build_workspace(result, oscillator=panel, show_ma=False)
+    assert len(hidden.data) == trace_count - 3
+    assert not any(t.name in {"MA5", "MA20", "MA60"} for t in hidden.data)
+
+
+def test_workspace_month_range_is_a_calendar_viewport_not_a_new_analysis(make_bars, metadata):
+    # TEST irregular records: a calendar month differs from 20/21/22 records.
+    bars = make_bars(close=[10, 11, 12, 13, 14, 15])
+    bars["date"] = pd.to_datetime(["2025-01-02", "2025-01-31", "2025-02-04", "2025-02-05", "2025-02-14", "2025-03-05"])
+    result = analyze("510300", bars, "2025-01-02", "2025-03-05", metadata)
+    metrics = result.metrics.copy()
+    fig = build_workspace(result, months=1)
+    # March 5 minus one calendar month is Feb 5: row 3 is the first visible observation.
+    assert fig.layout.xaxis.range == (2.5, 5.5)
+    assert len(fig.data[0].close) == 6
+    assert np.isnan(fig.data[2].y).all()  # insufficient MA20 remains a gap
+    assert result.metrics == metrics
+    assert result.metrics["period_return"] == .5  # 15/10-1 over the submitted period
+    assert build_workspace(result, months=6).layout.xaxis.range == (-.5, 5.5)
+    with pytest.raises(ValueError, match="指标面板"):
+        build_workspace(result, oscillator="invalid")
+    with pytest.raises(ValueError, match="快捷范围"):
+        build_workspace(result, months=2)
