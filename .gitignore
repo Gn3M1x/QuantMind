@@ -1,0 +1,39 @@
+# Python environments and generated caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+/.cache/
+
+# Local configuration; the example contains no credentials
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+
+# Root runtime directories; keep quantmind/ and tests/ samples trackable
+/data/
+/reports/
+/logs/
+/output/
+
+# Stray root databases, SQLite sidecars and rotated logs
+/*.db
+/*.db-*
+/*.sqlite
+/*.sqlite-*
+/*.sqlite3
+/*.sqlite3-*
+/*.log
+/*.log.*
+
+# Browser validation artifacts
+/.playwright-cli/
+/playwright-report/
+/test-results/
+
+# OS metadata
+.DS_Store

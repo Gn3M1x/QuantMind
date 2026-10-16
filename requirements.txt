@@ -1,0 +1,6 @@
+akshare==1.19.1
+numpy==2.4.6
+pandas==2.3.3
+plotly==6.9.0
+streamlit==1.66.0
+pytest==8.4.2
